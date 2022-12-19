@@ -53,7 +53,7 @@ show_versions
 
 echo -e "${MAIN_HEADING}"
 
-if is_debug ; then 
+if is_debug ; then
   echo -e "📜 ${WHITE}Changed shell scripts${NOCOLOR}"
   echo "${list_of_changed_scripts[@]}"
   echo
@@ -84,6 +84,12 @@ exit_status=0
 
 # Check output for Fixes
 csdiff --fixed "../dest-br-shellcheck.err" "../pr-br-shellcheck.err" > ../fixes.log
+declare -A hm
+for i in $(cat fixes.log | awk '{print $NF}'); do hm["$i"]=$(( hm["$i"] + 1 )); done
+echo "${!hm[@]}" > fixed-stats.log
+echo "${hm[@]}" >> fixed-stats.log
+
+cat fixed-stats.log
 
 if [[ -s ../fixes.log ]]; then
   echo -e "✅ ${GREEN}Fixed defects${NOCOLOR}"
